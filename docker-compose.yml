@@ -1,0 +1,62 @@
+services:
+  nuxt-app:
+    build:
+      context: .
+      target: development
+      args:
+        - STRAPI_URL=${STRAPI_URL}
+        - STRAPI_TOKEN=${STRAPI_TOKEN}
+    container_name: rollercoaster.dev-nuxt
+    ports:
+      - "${PORT}:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://${NUXT_DB_USER}:${NUXT_DB_PASSWORD}@postgres:5432/${NUXT_DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - rollercoaster-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: nx_postgres
+    environment:
+      POSTGRES_DB: ${NUXT_DB_NAME}
+      POSTGRES_USER: ${NUXT_DB_USER}
+      POSTGRES_PASSWORD: ${NUXT_DB_PASSWORD}
+    ports:
+      - "${NUXT_DB_PORT}:5432"
+    volumes:
+      - nuxt_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rollercoaster-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:6-alpine
+    container_name: nx_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - rollercoaster-network
+    restart: unless-stopped
+
+volumes:
+  nuxt_postgres_data:
+  redis_data:
+
+networks:
+  rollercoaster-network:
+    external: true
