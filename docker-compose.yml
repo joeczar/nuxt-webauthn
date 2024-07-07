@@ -17,6 +17,9 @@ services:
       - PORT=3000
       - NODE_ENV=development
       - DATABASE_URL=postgres://${NUXT_DB_USER}:${NUXT_DB_PASSWORD}@postgres:5432/${NUXT_DB_NAME}
+      - NUXT_DB_USER=${NUXT_DB_USER}
+      - NUXT_DB_PASSWORD=${NUXT_DB_PASSWORD}
+      - NUXT_DB_NAME=${NUXT_DB_NAME}
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -26,6 +29,7 @@ services:
     networks:
       - rollercoaster-network
     restart: unless-stopped
+
 
   postgres:
     image: postgres:16

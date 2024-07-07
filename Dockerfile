@@ -1,20 +1,28 @@
-# Use the official Node.js image for all stages
-FROM node:18 as base
+FROM node:20 as base
 WORKDIR /usr/src/app
 
 # Install pnpm
 RUN npm install -g pnpm
 
+# Set the pnpm store location
+ENV PNPM_STORE_PATH="/root/.pnpm-store"
+RUN pnpm config set store-dir $PNPM_STORE_PATH
+
 # Development stage
 FROM base AS development
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+# Remove existing node_modules and pnpm store if any
+RUN rm -rf node_modules $PNPM_STORE_PATH
+# Install all dependencies, including devDependencies
+RUN pnpm install --frozen-lockfile
 COPY . .
 ENV NODE_ENV=development
 ARG STRAPI_URL
 ARG STRAPI_TOKEN
 ENV STRAPI_URL=${STRAPI_URL}
 ENV STRAPI_TOKEN=${STRAPI_TOKEN}
+# Instead of adding packages, update existing ones
+RUN rm -rf node_modules $PNPM_STORE_PATH && pnpm install --frozen-lockfile && pnpm update @simplewebauthn/browser @simplewebauthn/server sequelize uuid @prisma/client
 EXPOSE 3000
 CMD ["pnpm", "run", "dev"]
 
