@@ -12,6 +12,7 @@ import {
     PublicKeyCredentialRequestOptionsJSON,
     RegistrationResponseJSON
 } from "@simplewebauthn/types";
+import {Credential} from "@/types/Credential"
 
 
 const rpName = process.env.RP_ID || 'Your App Name';
@@ -107,7 +108,7 @@ export async function generateAuthenticationOptionsForUser(email: string): Promi
 
     const options = await generateAuthenticationOptions({
         rpID,
-        allowCredentials: user.credentials?.map(cred => ({
+        allowCredentials: user.credentials?.map((cred: Credential) => ({
             id: cred.id,
             transports: cred.transports as AuthenticatorTransportFuture[] | undefined,
         })) || [],
@@ -134,7 +135,7 @@ export async function verifyAuthenticationForUser(email: string, response: Authe
         throw new Error('User not found or challenge not set');
     }
 
-    const credential = user.credentials?.find(c => c.id === response.id);
+    const credential = user.credentials?.find((c: Credential) => c.id === response.id);
     if (!credential) {
         throw new Error('Credential not found');
     }

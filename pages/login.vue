@@ -11,8 +11,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { startAuthentication } from '@simplewebauthn/browser'
+import { useAuth } from '~/composables/useAuth'
+import { useRouter } from 'vue-router'
 
 const email = ref('')
+const { login } = useAuth()
+const router = useRouter()
 
 async function handleLogin() {
   try {
@@ -36,10 +40,9 @@ async function handleLogin() {
     const verificationResult = await verificationResponse.json()
 
     if (verificationResult.verified) {
+      await login(verificationResult.sessionId)
       alert('Login successful!')
-      // Store the session token and redirect to dashboard
-      localStorage.setItem('sessionToken', verificationResult.sessionToken)
-      // Redirect to dashboard
+      router.push('/dashboard')
     } else {
       alert('Login failed. Please try again.')
     }
