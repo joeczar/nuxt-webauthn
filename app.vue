@@ -1,11 +1,11 @@
 <script setup>
-
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 </script>
 
 <template>
   <div>
-<!--    <NuxtRouteAnnouncer />-->
-<!--    <NuxtWelcome />-->
+    <h1>Test Nuxt App</h1>
     <NuxtPage />
   </div>
 </template>

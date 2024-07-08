@@ -12,7 +12,8 @@ RUN pnpm config set store-dir $PNPM_STORE_PATH
 FROM base AS development
 COPY package.json pnpm-lock.yaml ./
 # Remove existing node_modules and pnpm store if any
-RUN rm -rf node_modules $PNPM_STORE_PATH
+RUN rm -rf node_modules $PNPM_STORE_PATH .nuxt .output
+
 # Install all dependencies, including devDependencies
 RUN pnpm install --frozen-lockfile
 COPY . .
@@ -22,8 +23,12 @@ ARG STRAPI_TOKEN
 ENV STRAPI_URL=${STRAPI_URL}
 ENV STRAPI_TOKEN=${STRAPI_TOKEN}
 # Instead of adding packages, update existing ones
-RUN rm -rf node_modules $PNPM_STORE_PATH && pnpm install --frozen-lockfile && pnpm update @simplewebauthn/browser @simplewebauthn/server sequelize uuid @prisma/client
+RUN rm -rf node_modules $PNPM_STORE_PATH && pnpm install --frozen-lockfile && pnpm update @simplewebauthn/browser @simplewebauthn/server sequelize uuid @prisma/client @sendgrid/mail
+RUN rm -rf .nuxt .output
+RUN pnpm run build
 EXPOSE 3000
+ENV HOST=0.0.0.0
+ENV PORT=3000
 CMD ["pnpm", "run", "dev"]
 
 # Build stage for production
