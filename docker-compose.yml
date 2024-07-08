@@ -11,6 +11,8 @@ services:
       - "${PORT}:3000"
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/.nuxt
+      - /usr/src/app/.output
       - /usr/src/app/node_modules
     environment:
       - HOST=0.0.0.0
@@ -23,6 +25,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    tty: true
     depends_on:
       - postgres
       - redis

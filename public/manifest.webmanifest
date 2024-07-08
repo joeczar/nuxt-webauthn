@@ -1,0 +1,9 @@
+{
+  "name": "rollercoaster.dev",
+  "short_name": "RD",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": []
+}
