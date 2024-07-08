@@ -19,33 +19,26 @@ const rpName = process.env.RP_ID || 'Your App Name';
 const rpID = process.env.RP_ID || 'localhost';
 const origin = process.env.ORIGIN || `http://${rpID}:3000`;
 
-export async function generateRegistrationOptionsForUser(email: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+export async function generateRegistrationOptionsForUser(email: string) {
     const { prisma } = useNitroApp()
-
-    console.log("webauthn", {email})
-    let user = await prisma.user.findUnique({ where: { email } });
-
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-        user = await prisma.user.create({
-            data: { email }
-        });
+        throw new Error('User not found');
     }
 
-    console.log("User before options generation:", {
-        id: user.id,
-        email: user.email,
-        currentChallenge: user.currentChallenge
-    });
+    if (!user.isEmailVerified) {
+        throw new Error('Email not verified');
+    }
 
     const options = await generateRegistrationOptions({
         rpName,
         rpID,
-        userID: Uint8Array.from(Buffer.from(user.id, 'utf-8')),
+        userID: user.id,
         userName: user.email,
         attestationType: 'none',
         authenticatorSelection: {
             userVerification: 'preferred',
-        }
+        },
     });
 
     await prisma.user.update({
@@ -53,17 +46,12 @@ export async function generateRegistrationOptionsForUser(email: string): Promise
         data: { currentChallenge: options.challenge }
     });
 
-    console.log("User after update:", await prisma.user.findUnique({ where: { id: user.id } }));
-
     return options;
 }
 
 export async function verifyRegistrationForUser(email: string, response: RegistrationResponseJSON): Promise<VerifiedRegistrationResponse> {
     const { prisma } = useNitroApp()
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log("Verification - User found:", !!user);
-    console.log("Verification - User details:", user);
-
     if (!user || !user.currentChallenge) {
         throw new Error('User not found or challenge not set');
     }

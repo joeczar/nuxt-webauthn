@@ -10,7 +10,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { startAuthentication } from '@simplewebauthn/browser'
 import { useAuth } from '~/composables/useAuth'
 import { useRouter } from 'vue-router'
 
@@ -20,31 +19,35 @@ const router = useRouter()
 
 async function handleLogin() {
   try {
-    // Step 1: Get authentication options from server
-    const optionsResponse = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value })
-    })
-    const options = await optionsResponse.json()
+    if (process.client) {
+      const { startAuthentication } = await import('@simplewebauthn/browser')
 
-    // Step 2: Start authentication process in the browser
-    const asseResp = await startAuthentication(options)
+      // Step 1: Get authentication options from server
+      const optionsResponse = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.value })
+      })
+      const options = await optionsResponse.json()
 
-    // Step 3: Verify the authentication with the server
-    const verificationResponse = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, asseResp })
-    })
-    const verificationResult = await verificationResponse.json()
+      // Step 2: Start authentication process in the browser
+      const asseResp = await startAuthentication(options)
 
-    if (verificationResult.verified) {
-      await login(verificationResult.sessionId)
-      alert('Login successful!')
-      router.push('/dashboard')
-    } else {
-      alert('Login failed. Please try again.')
+      // Step 3: Verify the authentication with the server
+      const verificationResponse = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.value, asseResp })
+      })
+      const verificationResult = await verificationResponse.json()
+
+      if (verificationResult.verified) {
+        await login(verificationResult.sessionId)
+        alert('Login successful!')
+        router.push('/dashboard')
+      } else {
+        alert('Login failed. Please try again.')
+      }
     }
   } catch (error) {
     console.error('Login error:', error)
