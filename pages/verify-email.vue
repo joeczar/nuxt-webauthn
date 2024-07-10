@@ -1,14 +1,17 @@
 <template>
-  <form @submit.prevent="verifyEmail">
-    <input v-model="code" type="text" required placeholder="Enter verification code">
-    <button type="submit">Verify Email</button>
-  </form>
+  <div>
+    <h1>Verify Your Email</h1>
+    <p>We've sent a verification code to {{ email }}. Please enter it below.</p>
+    <form @submit.prevent="verifyEmail">
+      <input v-model="code" type="text" required placeholder="Enter verification code">
+      <button type="submit">Verify Email</button>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { startRegistration } from '@simplewebauthn/browser'
 
 const code = ref('')
 const route = useRoute()
@@ -24,8 +27,7 @@ async function verifyEmail() {
     })
 
     if (response.ok) {
-      // Email verified, now start WebAuthn registration
-      await startWebAuthnRegistration()
+      router.push({ name: 'webauthn-register', params: { email } })
     } else {
       const error = await response.json()
       alert(error.message || 'Verification failed')
@@ -33,40 +35,6 @@ async function verifyEmail() {
   } catch (error) {
     console.error('Verification error:', error)
     alert('An error occurred during verification')
-  }
-}
-
-async function startWebAuthnRegistration() {
-  try {
-    // Get registration options from server
-    const optionsRes = await fetch('/api/auth/webauthn/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    })
-    const options = await optionsRes.json()
-
-    // Start registration process in the browser
-    const attResp = await startRegistration(options)
-
-    // Send the response back to the server for verification
-    const verificationRes = await fetch('/api/auth/webauthn/register-verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, attResp })
-    })
-
-    if (verificationRes.ok) {
-      // Registration successful, log the user in
-      const { sessionId } = await verificationRes.json()
-      localStorage.setItem('sessionId', sessionId)
-      router.push('/dashboard')
-    } else {
-      throw new Error('WebAuthn registration failed')
-    }
-  } catch (error) {
-    console.error('WebAuthn registration error:', error)
-    alert('An error occurred during WebAuthn registration')
   }
 }
 </script>

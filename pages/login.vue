@@ -1,57 +1,38 @@
 <template>
   <div>
-    <h2>Login</h2>
+    <h1>Login with WebAuthn</h1>
     <form @submit.prevent="handleLogin">
-      <input v-model="email" type="email" required placeholder="Email">
-      <button type="submit">Login</button>
+      <input v-model="email" type="email" required placeholder="Enter your email" />
+      <button type="submit" :disabled="isLoading">Login</button>
     </form>
+    <p v-if="error">{{ error.message }}</p>
+    <p v-if="successMessage">{{ successMessage }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuth } from '~/composables/useAuth'
-import { useRouter } from 'vue-router'
+import { useWebAuthnAuthentication } from '@/composables/auth/useWebauthnAuthentication'
 
 const email = ref('')
-const { login } = useAuth()
-const router = useRouter()
+const successMessage = ref('')
+
+const { isLoading, error, authenticate } = useWebAuthnAuthentication()
 
 async function handleLogin() {
   try {
-    if (process.client) {
-      const { startAuthentication } = await import('@simplewebauthn/browser')
+    const sessionId = await authenticate(email.value)
+    successMessage.value = 'Login successful!'
+    // Here you might want to store the sessionId in your app's state management
+    // For example, if using Pinia:
+    // useAuthStore().setSessionId(sessionId)
 
-      // Step 1: Get authentication options from server
-      const optionsResponse = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.value })
-      })
-      const options = await optionsResponse.json()
-
-      // Step 2: Start authentication process in the browser
-      const asseResp = await startAuthentication(options)
-
-      // Step 3: Verify the authentication with the server
-      const verificationResponse = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.value, asseResp })
-      })
-      const verificationResult = await verificationResponse.json()
-
-      if (verificationResult.verified) {
-        await login(verificationResult.sessionId)
-        alert('Login successful!')
-        router.push('/dashboard')
-      } else {
-        alert('Login failed. Please try again.')
-      }
-    }
+    // Navigate to a protected page after successful login
+    setTimeout(() => {
+      navigateTo('/protected')
+    }, 2000)
   } catch (error) {
-    console.error('Login error:', error)
-    alert('An error occurred during login. Please try again.')
+    // Error is already handled in the composable
   }
 }
 </script>

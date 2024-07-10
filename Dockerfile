@@ -10,7 +10,7 @@ RUN pnpm config set store-dir $PNPM_STORE_PATH
 
 # Development stage
 FROM base AS development
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 # Remove existing node_modules and pnpm store if any
 RUN rm -rf node_modules $PNPM_STORE_PATH .nuxt .output
 

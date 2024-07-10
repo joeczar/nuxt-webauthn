@@ -1,7 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
 import { sendVerificationEmail } from '~/server/services/emailService'
-import { generateVerificationCode } from '~/server/utils/auth/generateCode'
-
+import { generateVerificationCode } from '@/server/utils/auth/generateCode'
 
 export default defineEventHandler(async (event) => {
     const { prisma } = useNitroApp()

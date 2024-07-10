@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
     const { email, code } = await readBody(event)
 
     const user = await prisma.user.findUnique({ where: { email } })
-
-    if (!user || user.verificationCode !== code || user.verificationCodeExpires < new Date()) {
+    console.log("verify email", {user})
+    if (!user || user.verificationCode !== code || user.verificationCodeExpires && user.verificationCodeExpires < new Date()) {
         throw createError({
             statusCode: 400,
             statusMessage: 'Invalid or expired verification code'
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         data: {
             isEmailVerified: true,
             verificationCode: null,
-            verificationCodeExpires: null
+            verificationCodeExpires: new Date(Date.now() + 24 * 60 * 60 * 1000)
         }
     })
 
