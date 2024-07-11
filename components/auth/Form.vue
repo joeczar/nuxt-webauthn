@@ -1,19 +1,7 @@
-<template>
-  <form @submit.prevent="handleSubmit">
-    <input
-        v-model="input"
-        :type="inputType"
-        required
-        :placeholder="placeholder"
-    >
-    <button type="submit">{{ buttonText }}</button>
-  </form>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   inputType?: string
   placeholder?: string
   buttonText?: string
@@ -33,3 +21,15 @@ function handleSubmit() {
   emit('submit', input.value)
 }
 </script>
+
+<template>
+  <form @submit.prevent="handleSubmit">
+    <input
+        v-model="input"
+        :type="inputType"
+        required
+        :placeholder="placeholder"
+    >
+    <button type="submit">{{ buttonText }}</button>
+  </form>
+</template>

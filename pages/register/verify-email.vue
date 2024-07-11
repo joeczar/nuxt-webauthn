@@ -2,7 +2,7 @@
   <div>
     <h1>Verify Your Email</h1>
     <form @submit.prevent="handleSubmit">
-      <input v-model="verificationCode" type="text" required placeholder="Enter verification code" />
+      <input v-model="verificationCode" type="text" required placeholder="Enter verification code" >
       <button type="submit" :disabled="isLoading">Verify Email</button>
     </form>
     <p v-if="error">{{ error.message }}</p>
@@ -42,7 +42,7 @@ function proceedToWebAuthnRegistration() {
 watch(isVerified, (newValue) => {
   if (newValue) {
     // You can perform any actions needed upon successful verification here
-    console.log('Email verified successfully')
+    console.info('Email verified successfully')
     navigateTo(`/register/webauthn?email=${encodeURIComponent(email)}`)
     // If you want to automatically navigate after a delay, you could do:
     // setTimeout(() => {

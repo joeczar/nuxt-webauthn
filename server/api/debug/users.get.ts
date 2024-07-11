@@ -2,7 +2,7 @@
 
 import { defineEventHandler } from 'h3'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
     // IMPORTANT: Remove this check in production
     if (process.env.NODE_ENV === 'production') {
         throw createError({
@@ -25,8 +25,6 @@ export default defineEventHandler(async (event) => {
                 // Avoid including sensitive information like passwords or tokens
             }
         })
-
-        console.log(`Retrieved ${users.length} users`)
 
         return users
     } catch (error) {

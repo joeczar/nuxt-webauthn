@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { startRegistration } from '@simplewebauthn/browser'
-import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from '@simplewebauthn/types'
+import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types'
 
 export function useWebAuthnRegistration() {
     const isLoading = ref(false)

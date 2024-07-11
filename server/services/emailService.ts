@@ -13,7 +13,7 @@ export async function sendVerificationEmail(to: string, code: string) {
 
     try {
         await sgMail.send(msg);
-        console.log('Verification email sent successfully');
+        console.info('Verification email sent successfully');
     } catch (error) {
         console.error('Error sending verification email:', error);
         throw new Error('Failed to send verification email');

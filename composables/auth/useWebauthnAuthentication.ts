@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { startAuthentication } from '@simplewebauthn/browser'
-import type { PublicKeyCredentialRequestOptionsJSON, AuthenticationResponseJSON } from '@simplewebauthn/types'
+import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types'
 
 export function useWebAuthnAuthentication() {
     const isLoading = ref(false)
@@ -10,13 +10,11 @@ export function useWebAuthnAuthentication() {
         isLoading.value = true
         error.value = null
         try {
-            console.log({email})
             // Step 1: Get authentication options
             const options = await $fetch<PublicKeyCredentialRequestOptionsJSON>('/api/auth/login', {
                 method: 'POST',
                 body: { email }
             })
-            console.log({options})
             // Step 2: Start authentication
             const authenticationResponse = await startAuthentication(options)
 

@@ -2,7 +2,7 @@
   <div>
     <h1>Login with WebAuthn</h1>
     <form @submit.prevent="handleLogin">
-      <input v-model="email" type="email" required placeholder="Enter your email" />
+      <input v-model="email" type="email" required placeholder="Enter your email" >
       <button type="submit" :disabled="isLoading">Login</button>
     </form>
     <p v-if="error">{{ error.message }}</p>
@@ -17,11 +17,11 @@ import { useWebAuthnAuthentication } from '@/composables/auth/useWebauthnAuthent
 const email = ref('')
 const successMessage = ref('')
 
-const { isLoading, error, authenticate } = useWebAuthnAuthentication()
+const { isLoading, error, /* authenticate */ } = useWebAuthnAuthentication()
 
 async function handleLogin() {
   try {
-    const sessionId = await authenticate(email.value)
+    // const sessionId = await authenticate(email.value)
     successMessage.value = 'Login successful!'
     // Here you might want to store the sessionId in your app's state management
     // For example, if using Pinia:

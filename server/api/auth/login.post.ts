@@ -4,19 +4,18 @@ import { createSession } from '~/server/utils/sessionStore'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
-    console.log("Login get options", body)
     try {
         if (!body.asseResp) {
             // Generate options
             const { email } = body
-            console.log("Attempting login for:", { email })
+
             if (!email) {
                 throw createError({
                     statusCode: 400,
                     statusMessage: 'Email is required'
                 })
             }
-            console.log('Generating options for email:', email)
+
             const options = await generateAuthenticationOptionsForUser(email)
             if (!options) {
                 // User not found or other issue
@@ -25,7 +24,6 @@ export default defineEventHandler(async (event) => {
                     statusMessage: 'User not found or unable to generate authentication options'
                 })
             }
-            console.log("Generated options:", options)
             return options
         } else {
             // Verify authentication
@@ -36,10 +34,9 @@ export default defineEventHandler(async (event) => {
                     statusMessage: 'Email and authentication response are required'
                 })
             }
-            console.log('Verifying authentication for email:', email)
-            console.log('Authentication response:', asseResp)
+
             const verification = await verifyAuthenticationForUser(email, asseResp)
-            console.log('Verification result:', verification)
+
             if (verification.verified) {
                 const sessionId = await createSession(email)
                 return { verified: true, sessionId }

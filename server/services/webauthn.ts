@@ -4,18 +4,14 @@
         generateAuthenticationOptions,
         verifyAuthenticationResponse,
         type VerifiedAuthenticationResponse,
-        type VerifiedRegistrationResponse, GenerateRegistrationOptionsOpts,
+        type VerifiedRegistrationResponse,
     } from '@simplewebauthn/server';
-    import {
+    import type {
         AuthenticationResponseJSON, AuthenticatorTransportFuture,
-        PublicKeyCredentialCreationOptionsJSON,
         PublicKeyCredentialRequestOptionsJSON,
         RegistrationResponseJSON
     } from "@simplewebauthn/types";
-    import {Credential} from "@/types/Credential"
     import {H3Error} from "h3";
-
-
 
     const rpName = process.env.RP_ID || 'Your App Name';
     const rpID = process.env.RP_ID || 'localhost';
@@ -86,17 +82,11 @@
 
     export async function generateAuthenticationOptionsForUser(email: string): Promise<PublicKeyCredentialRequestOptionsJSON> {
         const { prisma } = useNitroApp()
-        console.log("generateAuthenticationOptionsForUser", {email})
         let user;
         try {
             user = await prisma.user.findUnique({
                 where: { email },
                 include: { credentials: true },
-            });
-            console.log("User query result:", {
-                found: !!user,
-                email,
-                credentialsCount: user?.credentials?.length ?? 0
             });
         } catch (dbError) {
             if (dbError instanceof H3Error) {
@@ -123,7 +113,6 @@
                 })),
                 userVerification: 'preferred',
             });
-            console.log("Generated authentication options:", JSON.stringify(options, null, 2))
 
             await prisma.user.update({
                 where: { id: user.id },

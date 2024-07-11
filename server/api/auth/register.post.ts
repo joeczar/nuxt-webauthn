@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const verificationCode = generateVerificationCode()
-    const user = await prisma.user.create({
+     await prisma.user.create({
         data: {
             email,
             verificationCode,

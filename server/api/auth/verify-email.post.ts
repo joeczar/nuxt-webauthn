@@ -5,7 +5,6 @@ export default defineEventHandler(async (event) => {
     const { email, code } = await readBody(event)
 
     const user = await prisma.user.findUnique({ where: { email } })
-    console.log("verify email", {user})
     if (!user || user.verificationCode !== code || user.verificationCodeExpires && user.verificationCodeExpires < new Date()) {
         throw createError({
             statusCode: 400,

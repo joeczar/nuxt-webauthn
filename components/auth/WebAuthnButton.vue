@@ -10,10 +10,11 @@ const props = withDefaults(defineProps<{
   email?: string
 }>(), {
   mode: 'login',
-  buttonText: 'Use Passwordless Login'
+  buttonText: 'Use Passwordless Login',
+  email: ""
 })
 
-console.log('WebAuthnButton props:', props)
+
 
 const emit = defineEmits<{
   (e: 'success', sessionId?: string): void
@@ -40,15 +41,13 @@ async function handleWebAuthn() {
         body: { email: props.email, response: credential }
       })
     } else {
-      console.log('Requesting login options')
+
       options = await $fetch<PublicKeyCredentialRequestOptionsJSON>('/api/auth/login', {
         method: 'POST',
         body: { email: props.email }
       })
-      console.log('Received login options:', {options})
 
       credential = await startAuthentication(options, true)
-      console.log("webauthnButton", {email: props.email, options, credential})
       verificationResponse = await $fetch<{ verified: boolean; sessionId?: string }>('/api/auth/login', {
         method: 'POST',
         body: { email: props.email, asseResp: credential }
