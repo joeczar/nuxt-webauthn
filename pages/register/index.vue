@@ -6,7 +6,7 @@ const { email, isLoading, error, registerEmail } = useEmailRegistration()
 async function handleSubmit() {
   try {
     const message = await registerEmail()
-    console.info("emailRegistration",{message})
+    console.info('emailRegistration', { message })
     navigateTo(`/register/verify-email?email=${encodeURIComponent(email.value)}`)
   } catch (error) {
     console.error(error)
@@ -16,7 +16,7 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <input v-model="email" type="email" required >
+    <input v-model="email" type="email" required />
     <button type="submit" :disabled="isLoading">Register</button>
     <p v-if="error">{{ error.message }}</p>
   </form>

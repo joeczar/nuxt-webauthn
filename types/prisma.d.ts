@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
 
 declare module 'nitropack' {
-    interface NitroApp {
-        prisma: PrismaClient
-    }
+  interface NitroApp {
+    prisma: PrismaClient
+  }
 }

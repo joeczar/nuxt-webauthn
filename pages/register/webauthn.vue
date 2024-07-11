@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
-import {useWebAuthnRegistration} from '@/composables/auth/useWebauthnRegistration'
-import {useRoute} from '#app'
+import { ref } from 'vue'
+import { useWebAuthnRegistration } from '@/composables/auth/useWebauthnRegistration'
+import { useRoute } from '#app'
 
 const route = useRoute()
 

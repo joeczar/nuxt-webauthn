@@ -2,7 +2,7 @@
   <div>
     <h2>Verify Your Email</h2>
     <form @submit.prevent="verifyEmail">
-      <input v-model="code" type="text" placeholder="Enter verification code" required>
+      <input v-model="code" type="text" placeholder="Enter verification code" required />
       <button type="submit">Verify Email</button>
     </form>
   </div>
@@ -19,7 +19,7 @@ async function verifyEmail() {
     const response = await fetch('/api/auth/verify-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, code: code.value })
+      body: JSON.stringify({ email: email.value, code: code.value }),
     })
 
     if (response.ok) {

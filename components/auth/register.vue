@@ -2,7 +2,7 @@
   <div>
     <h2>Register</h2>
     <form @submit.prevent="handleRegister">
-      <input v-model="email" type="email" required placeholder="Email">
+      <input v-model="email" type="email" required placeholder="Email" />
       <button type="submit">Register</button>
     </form>
   </div>
@@ -20,7 +20,7 @@ async function handleRegister() {
     const optionsResponse = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value })
+      body: JSON.stringify({ email: email.value }),
     })
     const options = await optionsResponse.json()
 
@@ -31,7 +31,7 @@ async function handleRegister() {
     const verificationResponse = await fetch('/api/auth/register/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, attResp })
+      body: JSON.stringify({ email: email.value, attResp }),
     })
     const verificationResult = await verificationResponse.json()
 

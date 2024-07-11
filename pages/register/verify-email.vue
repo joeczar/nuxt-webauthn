@@ -2,7 +2,12 @@
   <div>
     <h1>Verify Your Email</h1>
     <form @submit.prevent="handleSubmit">
-      <input v-model="verificationCode" type="text" required placeholder="Enter verification code" >
+      <input
+        v-model="verificationCode"
+        type="text"
+        required
+        placeholder="Enter verification code"
+      />
       <button type="submit" :disabled="isLoading">Verify Email</button>
     </form>
     <p v-if="error">{{ error.message }}</p>
@@ -14,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from 'vue'
-import {useEmailVerification} from '@/composables/auth/useVerifyEmail'
-import {useRoute} from '#app'
+import { ref, watch } from 'vue'
+import { useEmailVerification } from '@/composables/auth/useVerifyEmail'
+import { useRoute } from '#app'
 
 const route = useRoute()
 const email = route.query.email as string
